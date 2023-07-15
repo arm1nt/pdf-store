@@ -40,7 +40,7 @@ export class PdfDetailViewComponent implements OnInit {
       },
       error: err => {
         this._snackBar.open("No pdf with given id found.", "Close");
-
+        this.router.navigate(["/overview"]);
       }
       }
     )
