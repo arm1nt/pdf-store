@@ -1,0 +1,23 @@
+<div class="overview-container">
+  <input id="pdf-search" type="text" placeholder="Search...">
+</div>
+
+
+<div class="pdfOverview-container">
+  <div *ngFor="let pdf of pdfs" class="pdfbox" routerLink="/detail/{{pdf.id}}">
+    <img src="data:image/jpeg;base64, {{pdf.picture}}" style="align-self: center; justify-self: center" width="125">
+    <span title="{{pdf.title}}" style="align-self: center; justify-self: center; margin-top: 0.5em; cursor: default">{{pdf.title.substring(0, 150)}}</span>
+  </div>
+</div>
+<mat-paginator class="pagination" [length]="total_number_of_pages"
+               (page)="getNextPage($event)"
+               [pageSize]="24"
+               [hidePageSize]="true"
+          >
+</mat-paginator>
+
+<!--<div class="custom-pagination">
+  < page 1 of 32 >
+</div>-->
+
+

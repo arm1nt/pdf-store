@@ -1,0 +1,72 @@
+.overview-container {
+  width: 90%;
+  display: flex;
+  align-self: center;
+  margin: 2em auto auto;
+  /*border: 1px solid blue;*/
+}
+
+#pdf-search {
+  display: flex;
+  margin: auto;
+  justify-self: center;
+  width: 50%;
+  max-width: 1600px;
+  height: 3em;
+  border: none;
+  border-radius: 0.7em;
+  text-indent: 2em;
+  background-color: rgba(241, 241, 241, 0.8);
+}
+
+.pdfOverview-container {
+  /*border: 1px solid green;*/
+  width: 90%;
+  max-width: 1600px;
+  margin: 3em auto auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 14em);
+  grid-row-gap: 2em;
+  grid-column-gap: 1em;
+  /*rid-row-gap: 50px;*/
+  justify-content: space-around;
+}
+
+.pdf-container {
+  background-color: lightgray;
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  cursor: pointer;
+  width: 8em;
+  margin-bottom: 0.75em
+}
+
+.pdfbox {
+  /*background-color: #444;*/
+  background-color: rgba(241, 241, 241, 0.8);
+  color: black;
+  font-family: 'DM Sans', sans-serif;;
+  border-radius: 15px;
+  padding: 20px;
+  /*font-size: 150%;*/
+  word-break: break-word;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.custom-pagination {
+  width: 90%;
+  max-width: 1600px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin: 2em auto auto;
+}
+
+.pagination {
+  width: 90%;
+  max-width: 1600px;
+  margin: auto;
+}
