@@ -1,6 +1,7 @@
 export interface PdfDetails {
   id: string,
   title: string,
+  file_name: string,
   author: string,
   pages: number,
   comments: string,

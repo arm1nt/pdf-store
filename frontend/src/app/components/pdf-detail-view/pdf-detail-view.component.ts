@@ -44,13 +44,72 @@ export class PdfDetailViewComponent implements OnInit {
       }
       }
     )
+  }
 
+  bytesToBase64(bytes:any ) {
 
-    //console.log(this.route.snapshot.paramMap.get('id'));
-    /*this.route.params.subscribe(data => {
-      console.log(data);
-    });*/
+    const base64abc = [
+      "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+      "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+      "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+      "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+      "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "/"
+    ];
 
+    let result = '', i, l = bytes.length;
+    for (i = 2; i < l; i += 3) {
+      result += base64abc[bytes[i - 2] >> 2];
+      result += base64abc[((bytes[i - 2] & 0x03) << 4) | (bytes[i - 1] >> 4)];
+      result += base64abc[((bytes[i - 1] & 0x0F) << 2) | (bytes[i] >> 6)];
+      result += base64abc[bytes[i] & 0x3F];
+    }
+    if (i === l + 1) { // 1 octet yet to write
+      result += base64abc[bytes[i - 2] >> 2];
+      result += base64abc[(bytes[i - 2] & 0x03) << 4];
+      result += "==";
+    }
+    if (i === l) { // 2 octets yet to write
+      result += base64abc[bytes[i - 2] >> 2];
+      result += base64abc[((bytes[i - 2] & 0x03) << 4) | (bytes[i - 1] >> 4)];
+      result += base64abc[(bytes[i - 1] & 0x0F) << 2];
+      result += "=";
+    }
+    return result;
+  }
+
+  toBlob() {
+    const response = this.bytesToBase64(this.pdfDetails?.pdf);
+    const byteCharacters = atob(response);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    return new Blob([byteArray], {type: 'application/pdf'});
+
+  }
+
+  downloadPdf() {
+    const file = this.toBlob()
+
+    //download (in firefox the pdf is still opened in a new tab)
+    const url = URL.createObjectURL(file);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${this.pdfDetails?.file_name}`;
+    link.click();
+
+    URL.revokeObjectURL(url);
+    link.remove();
+  }
+
+  viewPdf() {
+    const file = this.toBlob()
+
+    const fileUrl = URL.createObjectURL(file);
+    window.open(fileUrl)
+
+    URL.revokeObjectURL(fileUrl);
   }
 
 }
