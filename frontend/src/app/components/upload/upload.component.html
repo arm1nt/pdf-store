@@ -1,4 +1,20 @@
-<label for="file-upload">Select files to upload</label>
-<br>
-<input id="file-upload" type="file" multiple (change)="uploadFile($event)"/>
-<button (click)="uploadFile($event)">Upload me</button>
+<div class="file-upload-container" appDragAndDrop (dropped)="uploadFile2($event)">
+  <span class="upload-information">Drop files to upload here.</span>
+  <input id="file-upload-in-box" type="file" multiple  (change)="uploadFile($event)" style="border: 2px solid green"/>
+  <label class="upload-label" for="file-upload-in-box">Browse for Files</label>
+</div>
+
+<div class="file-upload-overview">
+  <h2 style="text-align: center">Selected Pdfs</h2>
+
+  <div class="file-upload-summary" *ngFor="let file of files; let indexOfElement=index">
+    <span style="display: flex; flex-direction: row; justify-content: space-between; width: 100%">
+      <span class="pdf-upload-name">{{file.name}}</span>
+      <span class="pdf-upload-trash-section"><span class="material-symbols-outlined pdf-upload-trash-icon" (click)="removeFromPossibleUploads(indexOfElement)">delete</span></span>
+    </span>
+  </div>
+</div>
+
+<div class="upload-button-container">
+  <span class="upload-button" (click)="uploadFiles()">Upload</span>
+</div>

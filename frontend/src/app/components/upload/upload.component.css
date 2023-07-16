@@ -1,0 +1,108 @@
+.file-upload-container {
+  background-color: #b00909;
+  width: 50%;
+  max-width: 1000px;
+  margin: 5em auto auto;
+  border-radius: 7px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  position: relative;
+}
+
+.upload-information {
+  font-family: 'DM Sans', sans-serif;
+  color: white;
+  font-size: xx-large;
+  font-weight: 500;
+  text-align: center;
+  margin-top: 0.5em;
+  margin-bottom: 2em;
+}
+
+.upload-label {
+  display: inline-flex;
+  flex-direction: row;
+  width: 30%;
+  align-self: center;
+  justify-content: center;
+  color: #b00909;
+  font-family: 'DM Sans', sans-serif;
+  background-color: white;
+  padding: 0.5em;
+  border-radius: 7px;
+  margin-bottom: 2em;
+}
+
+.file-upload-container input {
+  opacity: 0;
+  position: absolute;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.file-upload-overview {
+  width: 50%;
+  max-width: 1000px;
+  margin: 4em auto auto;
+  background-color: rgba(218, 218, 218, 0.8);
+  max-height: 700px;
+  overflow-y: auto;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.file-upload-summary {
+  width: 90%;
+  padding: 0.7em;
+  background-color: rgb(241, 241, 241);
+  border-radius: 7px;
+  font-family: 'DM Sans', sans-serif;
+  margin-bottom: 0.7em;
+  word-break: break-all;
+  display: flex;
+  justify-content: space-between;
+
+}
+
+.upload-button-container {
+  width: 50%;
+  max-width: 1000px;
+  display: flex;
+  justify-content: center;
+  margin: 2em auto auto;
+}
+
+.upload-button {
+  background-color: #b00909;
+  color: white;
+  padding: 0.75em 2em;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.upload-button:hover {
+  transform: scale(1.05);
+}
+
+.pdf-upload-name {
+  word-break: break-all;
+  width: 85%;
+}
+
+.pdf-upload-trash-section {
+  width: 15%;
+  display: flex;
+  align-self: center;
+  justify-content: center;
+}
+
+.pdf-upload-trash-icon {
+  cursor: pointer;
+}

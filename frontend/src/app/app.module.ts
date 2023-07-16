@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import {HostListener, NgModule} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -15,6 +15,7 @@ import {PdfDetailViewComponent} from "./components/pdf-detail-view/pdf-detail-vi
 import {MatPaginatorModule} from "@angular/material/paginator";
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatChipsModule} from '@angular/material/chips';
+import { DragAndDropDirective } from './directives/drag-and-drop.directive';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import {MatChipsModule} from '@angular/material/chips';
     HeaderComponent,
     OverviewComponent,
     UploadComponent,
-    PdfDetailViewComponent
+    PdfDetailViewComponent,
+    DragAndDropDirective,
   ],
   imports: [
     BrowserModule,
