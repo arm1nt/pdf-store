@@ -9,5 +9,4 @@ export interface PdfDetails {
   last_accessed: Date,
   uploaded: Date,
   picture: string,
-  pdf: Uint8Array,
 }

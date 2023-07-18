@@ -26,7 +26,6 @@ export class OverviewComponent {
     this.pdfService.getAllFilesPaged(this.page, this.size).subscribe(data => {
       this.pdfs = data.pdfs_previews;
       this.total_number_of_pages = data.count
-      console.log("huhu: " + this.pdfs);
     });
   }
 

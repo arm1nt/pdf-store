@@ -4,6 +4,7 @@ import {Observable} from "rxjs";
 import {Globals} from "../global/globals";
 import {PdfOverviewInfo} from "../dtos/pdfOverview";
 import {PdfDetails} from "../dtos/pdfDetails";
+import {PdfDownload} from "../dtos/pdfDownload";
 
 @Injectable({
   providedIn: 'root'
@@ -32,7 +33,13 @@ export class PdfService {
     return this.httpClient.get<PdfOverviewInfo>(`${this.pdfBaseUri}pdfs?page=${page}&size=${size}`);
   }
 
-  getById(id: string): Observable<PdfDetails> {
-    return this.httpClient.get<PdfDetails>(`${this.pdfBaseUri}pdfs/${id}`);
+  getMetadataById(id: string): Observable<PdfDetails> {
+    return this.httpClient.get<PdfDetails>(`${this.pdfBaseUri}pdfs/metadata/${id}`);
   }
+
+  //TODO: change return type of observable
+  getById(id: string): Observable<PdfDownload> {
+    return this.httpClient.get<PdfDownload>(`${this.pdfBaseUri}pdfs/${id}`);
+  }
+
 }

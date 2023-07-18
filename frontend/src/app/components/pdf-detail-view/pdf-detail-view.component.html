@@ -8,8 +8,8 @@
   <div class="img-download-container">
     <img class="detail-image" src="data:image/jpeg;base64, {{pdfDetails.picture}}" width="60%">
     <span class="download-view-button-container">
-      <span class="button download" (click)="downloadPdf()">Download</span>
-      <span class="button view" (click)="viewPdf()">View</span>
+      <span class="button download" (click)="getPdf(true)">Download</span>
+      <span class="button view" (click)="getPdf(false)">View</span>
     </span>
   </div>
   <div class="information-container">

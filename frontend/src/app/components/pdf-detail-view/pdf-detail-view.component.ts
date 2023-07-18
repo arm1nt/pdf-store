@@ -11,6 +11,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 })
 export class PdfDetailViewComponent implements OnInit {
 
+  pdfId: string | null | undefined;
   pdfDetails: PdfDetails | undefined;
   testChips = ["Test", "Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test",
     "Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test",
@@ -27,16 +28,15 @@ export class PdfDetailViewComponent implements OnInit {
   ngOnInit() {
 
     let id = this.route.snapshot.paramMap.get('id');
+    this.pdfId = id;
 
     if (id === null) {
       this.router.navigate(["/overview"]);
     }
-
     // @ts-ignore
-    this.pdfService.getById(id).subscribe({
+    this.pdfService.getMetadataById(id).subscribe({
       next: value => {
         this.pdfDetails = value;
-        console.log(value);
       },
       error: err => {
         this._snackBar.open("No pdf with given id found.", "Close");
@@ -77,8 +77,8 @@ export class PdfDetailViewComponent implements OnInit {
     return result;
   }
 
-  toBlob() {
-    const response = this.bytesToBase64(this.pdfDetails?.pdf);
+  toBlob(pdfArray: Uint8Array) {
+    const response = this.bytesToBase64(pdfArray);
     const byteCharacters = atob(response);
     const byteNumbers = new Array(byteCharacters.length);
     for (let i = 0; i < byteCharacters.length; i++) {
@@ -89,8 +89,26 @@ export class PdfDetailViewComponent implements OnInit {
 
   }
 
-  downloadPdf() {
-    const file = this.toBlob()
+  getPdf(download: boolean) {
+    if (!this.pdfId) {
+      //error message
+      return;
+    }
+
+    this.pdfService.getById(this.pdfId).subscribe({
+      next: data => {
+        if (download) {
+          this.downloadPdf(data.pdf);
+        } else {
+          this.viewPdf(data.pdf);
+        }
+      },
+      error: err => { /*TODO: Error msg*/}
+    });
+  }
+
+  downloadPdf(pdfArray: Uint8Array) {
+    const file = this.toBlob(pdfArray);
 
     //download (in firefox the pdf is still opened in a new tab)
     const url = URL.createObjectURL(file);
@@ -103,8 +121,8 @@ export class PdfDetailViewComponent implements OnInit {
     link.remove();
   }
 
-  viewPdf() {
-    const file = this.toBlob()
+  viewPdf(pdfArray: Uint8Array) {
+    const file = this.toBlob(pdfArray);
 
     const fileUrl = URL.createObjectURL(file);
     window.open(fileUrl)
