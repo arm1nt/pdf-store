@@ -12,23 +12,28 @@
       <span class="button view" (click)="getPdf(false)">View</span>
     </span>
   </div>
-  <div class="information-container">
+  <div class="information-container unselectable">
+    <span class="detail-delete-edit">
+      <span class="detail-delete-edit-button"><span class="material-symbols-outlined">edit</span></span>
+      <span class="detail-delete-edit-button"><span class="material-symbols-outlined">delete</span></span>
+    </span>
+
     <mat-form-field appearance="outline" class="detail-title">
       <mat-label>Title</mat-label>
-      <input class="unselectable" matInput type="text" value="{{(!pdfDetails.title) ? 'N/A' : pdfDetails.title}}" readonly>
+      <input class="unselectable" matInput type="text" value="{{(!pdfDetails.title) ? 'N/A' : pdfDetails.title}}" disabled>
     </mat-form-field>
     <mat-form-field appearance="outline" class="detail-title">
       <mat-label>Author</mat-label>
-      <input class="unselectable" matInput type="text" value="{{(!pdfDetails.author) ? 'N/A' : pdfDetails.author}}" readonly>
+      <input class="unselectable" matInput type="text" value="{{(!pdfDetails.author) ? 'N/A' : pdfDetails.author}}" disabled>
     </mat-form-field>
     <div style="display: flex; flex-direction: row; justify-content: space-between">
       <mat-form-field appearance="outline" style="width: 48%">
         <mat-label>Uploaded</mat-label>
-        <input class="unselectable" matInput readonly value="{{(!pdfDetails.uploaded) ? 'N/A' : pdfDetails.uploaded}}">
+        <input class="unselectable" matInput disabled value="{{(!pdfDetails.uploaded) ? 'N/A' : pdfDetails.uploaded}}">
       </mat-form-field>
       <mat-form-field appearance="outline" style="width: 48%">
         <mat-label>Pages</mat-label>
-        <input class="unselectable" matInput readonly value="{{pdfDetails.pages}}">
+        <input class="unselectable" matInput disabled value="{{pdfDetails.pages}}">
       </mat-form-field>
     </div>
 
@@ -42,7 +47,7 @@
 
     <mat-form-field appearance="outline">
       <mat-label>Comments</mat-label>
-      <textarea class="unselectable" matInput readonly>{{(!pdfDetails.comments) ? 'N/A' : pdfDetails.comments}}</textarea>
+      <textarea class="unselectable" matInput disabled>{{(!pdfDetails.comments) ? 'N/A' : pdfDetails.comments}}</textarea>
     </mat-form-field>
 
   </div>

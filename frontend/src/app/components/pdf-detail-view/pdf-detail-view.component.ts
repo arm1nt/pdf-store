@@ -77,9 +77,8 @@ export class PdfDetailViewComponent implements OnInit {
     return result;
   }
 
-  toBlob(pdfArray: Uint8Array) {
-    const response = this.bytesToBase64(pdfArray);
-    const byteCharacters = atob(response);
+  toBlob(pdfArray: string) {
+    const byteCharacters = atob(pdfArray);
     const byteNumbers = new Array(byteCharacters.length);
     for (let i = 0; i < byteCharacters.length; i++) {
       byteNumbers[i] = byteCharacters.charCodeAt(i);
@@ -91,7 +90,7 @@ export class PdfDetailViewComponent implements OnInit {
 
   getPdf(download: boolean) {
     if (!this.pdfId) {
-      //error message
+      //TODO: error message
       return;
     }
 
@@ -107,10 +106,8 @@ export class PdfDetailViewComponent implements OnInit {
     });
   }
 
-  downloadPdf(pdfArray: Uint8Array) {
+  downloadPdf(pdfArray: string) {
     const file = this.toBlob(pdfArray);
-
-    //download (in firefox the pdf is still opened in a new tab)
     const url = URL.createObjectURL(file);
     const link = document.createElement('a');
     link.href = url;
@@ -121,7 +118,7 @@ export class PdfDetailViewComponent implements OnInit {
     link.remove();
   }
 
-  viewPdf(pdfArray: Uint8Array) {
+  viewPdf(pdfArray: string) {
     const file = this.toBlob(pdfArray);
 
     const fileUrl = URL.createObjectURL(file);

@@ -16,6 +16,7 @@ import {MatPaginatorModule} from "@angular/material/paginator";
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatChipsModule} from '@angular/material/chips';
 import { DragAndDropDirective } from './directives/drag-and-drop.directive';
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { DragAndDropDirective } from './directives/drag-and-drop.directive';
     MatPaginatorModule,
     MatSnackBarModule,
     MatChipsModule,
+    FormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

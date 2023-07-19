@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpParams} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Globals} from "../global/globals";
 import {PdfOverviewInfo} from "../dtos/pdfOverview";
 import {PdfDetails} from "../dtos/pdfDetails";
 import {PdfDownload} from "../dtos/pdfDownload";
+import {PdfSearch} from "../dtos/pdfSearch";
 
 @Injectable({
   providedIn: 'root'
@@ -30,16 +31,43 @@ export class PdfService {
 
   getAllFilesPaged(page: number, size: number): Observable<PdfOverviewInfo> {
 
-    return this.httpClient.get<PdfOverviewInfo>(`${this.pdfBaseUri}pdfs?page=${page}&size=${size}`);
+    let params = new HttpParams();
+    params = params.set('page', page);
+    params = params.set('size', size);
+
+    return this.httpClient.get<PdfOverviewInfo>(`${this.pdfBaseUri}pdfs`, {params});
   }
 
   getMetadataById(id: string): Observable<PdfDetails> {
     return this.httpClient.get<PdfDetails>(`${this.pdfBaseUri}pdfs/metadata/${id}`);
   }
 
-  //TODO: change return type of observable
   getById(id: string): Observable<PdfDownload> {
     return this.httpClient.get<PdfDownload>(`${this.pdfBaseUri}pdfs/${id}`);
+  }
+
+  search(search: PdfSearch): Observable<PdfOverviewInfo> {
+
+    let params = new HttpParams();
+
+    if (search.title) {
+      params = params.set('title', search.title);
+    }
+
+    if (search.author) {
+      params = params.set('author', search.author);
+    }
+
+    if (search.tags) {
+      params = params.set('tag', search.tags);
+    }
+
+    params = params.set('page', search.page);
+    params = params.set('size', search.size);
+
+
+    return this.httpClient.get<PdfOverviewInfo>(`${this.pdfBaseUri}pdfs/search`, {params});
+
   }
 
 }
