@@ -1,5 +1,5 @@
 <div class="overview-container">
-  <input id="pdf-search" type="text" placeholder="Search..." [(ngModel)]="search_title">
+  <input id="pdf-search" type="text" placeholder="Search..." [(ngModel)]="search_title" (keydown.enter)="search()">
   <span id="search-expand-details">
     <span *ngIf="expand_detail_view" class="material-symbols-outlined details-expand-style" (click)="showDetailView()">expand_less</span>
     <span *ngIf="!expand_detail_view" class="material-symbols-outlined details-expand-style" (click)="showDetailView()">expand_more</span>
@@ -8,8 +8,8 @@
 </div>
 <div *ngIf="expand_detail_view" class="detailed-search">
   <div class="detail-view1">
-    <input class="detail-search-input" placeholder="Author..." [(ngModel)]="search_author">
-    <input class="detail-search-input" placeholder="Tags..." [(ngModel)]="search_tags">
+    <input class="detail-search-input" placeholder="Author..." [(ngModel)]="search_author" (keydown.enter)="search()">
+    <input class="detail-search-input" placeholder="Tags..." [(ngModel)]="search_tags" (keydown.enter)="search()">
   </div>
   <div class="detail-view2">
     <div class="search-clear-button" (click)="clear()">Clear</div>
