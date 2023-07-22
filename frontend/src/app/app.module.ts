@@ -17,6 +17,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatChipsModule} from '@angular/material/chips';
 import { DragAndDropDirective } from './directives/drag-and-drop.directive';
 import {FormsModule} from "@angular/forms";
+import { DeleteDialogComponent } from './components/delete-dialog/delete-dialog.component';
+import {MatDialogModule} from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -26,6 +28,7 @@ import {FormsModule} from "@angular/forms";
     UploadComponent,
     PdfDetailViewComponent,
     DragAndDropDirective,
+    DeleteDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -39,6 +42,7 @@ import {FormsModule} from "@angular/forms";
     MatSnackBarModule,
     MatChipsModule,
     FormsModule,
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]

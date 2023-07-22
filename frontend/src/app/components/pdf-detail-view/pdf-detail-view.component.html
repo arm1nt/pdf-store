@@ -1,6 +1,6 @@
 
 <div class="detail-navigation">
-  <span class="return-to-overview" routerLink="/overview"> <span class="material-symbols-outlined" style="margin-right: 0.5em"> arrow_left_alt </span> Back to overview </span>
+  <span class="return-to-overview" routerLink="/overview"> <span class="material-symbols-outlined return-to-overview-icon"> arrow_left_alt </span> Back to overview </span>
 </div>
 
 <div *ngIf="pdfDetails" class="detail-container">
@@ -14,41 +14,61 @@
   </div>
   <div class="information-container unselectable">
     <span class="detail-delete-edit">
-      <span class="detail-delete-edit-button"><span class="material-symbols-outlined">edit</span></span>
-      <span class="detail-delete-edit-button"><span class="material-symbols-outlined">delete</span></span>
+      <span class="detail-delete-edit-button" (click)="toggleEditMode()"><span class="material-symbols-outlined">edit</span></span>
+      <span class="detail-delete-edit-button" (click)="deletePdf()"><span class="material-symbols-outlined">delete</span></span>
     </span>
 
-    <mat-form-field appearance="outline" class="detail-title">
+    <mat-form-field appearance="outline" class="detail-title" floatLabel="always">
       <mat-label>Title</mat-label>
-      <input class="unselectable" matInput type="text" value="{{(!pdfDetails.title) ? 'N/A' : pdfDetails.title}}" disabled>
+      <input class="unselectable" matInput type="text" [(ngModel)]="pdfUpdate.title" [disabled]="!editMode">
     </mat-form-field>
-    <mat-form-field appearance="outline" class="detail-title">
+    <mat-form-field appearance="outline" class="detail-title" floatLabel="always">
       <mat-label>Author</mat-label>
-      <input class="unselectable" matInput type="text" value="{{(!pdfDetails.author) ? 'N/A' : pdfDetails.author}}" disabled>
+      <input class="unselectable" matInput type="text" [(ngModel)]="pdfUpdate.author" [disabled]="!editMode" placeholder="">
     </mat-form-field>
-    <div style="display: flex; flex-direction: row; justify-content: space-between">
-      <mat-form-field appearance="outline" style="width: 48%">
+    <div *ngIf="!editMode" class="uploaded-pages-container">
+      <mat-form-field appearance="outline" class="uploaded-pages-form-field">
         <mat-label>Uploaded</mat-label>
-        <input class="unselectable" matInput disabled value="{{(!pdfDetails.uploaded) ? 'N/A' : pdfDetails.uploaded}}">
+        <input class="unselectable" matInput value="{{(!pdfDetails.uploaded) ? 'N/A' : pdfDetails.uploaded}}" disabled>
       </mat-form-field>
-      <mat-form-field appearance="outline" style="width: 48%">
+      <mat-form-field appearance="outline" class="uploaded-pages-form-field">
         <mat-label>Pages</mat-label>
-        <input class="unselectable" matInput disabled value="{{pdfDetails.pages}}">
+        <input class="unselectable" matInput value="{{pdfDetails.pages}}" disabled>
       </mat-form-field>
     </div>
 
-    <div style="display: flex; margin-bottom: 2em">
+    <div *ngIf="!editMode" style="display: flex; margin-bottom: 2em">
       <mat-chip-listbox>
-        <mat-chip *ngFor="let tag of testChips" style="background-color: #b00909;">
+        <mat-chip *ngFor="let tag of pdfUpdate.tags" style="background-color: #b00909">
           {{tag}}
         </mat-chip>
       </mat-chip-listbox>
     </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Comments</mat-label>
-      <textarea class="unselectable" matInput disabled>{{(!pdfDetails.comments) ? 'N/A' : pdfDetails.comments}}</textarea>
+    <mat-form-field *ngIf="editMode" class="chip-list" appearance="outline">
+      <mat-label>Tags</mat-label>
+      <mat-chip-grid #chipGrid>
+        <mat-chip-row *ngFor="let tag of pdfUpdate.tags" [editable]="false" (removed)="remove(tag)" style="background-color: #b00909">
+          {{tag}}
+          <button matChipRemove><mat-icon style="color: white">cancel</mat-icon></button>
+        </mat-chip-row>
+        <input placeholder="Add tag..." [matChipInputFor]="chipGrid"
+               [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+               [matChipInputAddOnBlur]="addOnBlur"
+               (matChipInputTokenEnd)="add($event)"/>
+      </mat-chip-grid>
+
     </mat-form-field>
+
+    <mat-form-field appearance="outline" floatLabel="always">
+      <mat-label>Comments</mat-label>
+      <textarea class="unselectable" matInput [disabled]="!editMode" [(ngModel)]="pdfUpdate.comments"></textarea>
+    </mat-form-field>
+
+    <div *ngIf="editMode" class="delete-cancel-edit-container">
+      <span class="cancel-edit-button" (click)="cancelEdit()">Cancel</span>
+      <span class="cancel-edit-button" (click)="saveEdit()">Save</span>
+    </div>
 
   </div>
 

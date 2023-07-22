@@ -1,0 +1,27 @@
+.confirm-header {
+  width: 100%;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.delete-dialog-container {
+  padding: 1em;
+  width: 100%;
+  margin: auto;
+}
+
+.delete-button-container {
+  margin-top: 1em;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  gap: 20px;
+}
+
+.delete-dialog-button {
+  background-color: #b00909;
+  color: white;
+  cursor: pointer;
+  padding: 0.4em 0.8em;
+  border-radius: 5px;
+}

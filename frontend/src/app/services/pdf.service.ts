@@ -6,6 +6,7 @@ import {PdfOverviewInfo} from "../dtos/pdfOverview";
 import {PdfDetails} from "../dtos/pdfDetails";
 import {PdfDownload} from "../dtos/pdfDownload";
 import {PdfSearch} from "../dtos/pdfSearch";
+import {UpdatePdf} from "../dtos/updatePdf";
 
 @Injectable({
   providedIn: 'root'
@@ -70,4 +71,11 @@ export class PdfService {
 
   }
 
+  updatePdf(update: UpdatePdf): Observable<void> {
+    return this.httpClient.put<void>(`${this.pdfBaseUri}pdfs/${update.id}`, update);
+  }
+
+  deletePdf(id: string): Observable<void> {
+    return this.httpClient.delete<void>(`${this.pdfBaseUri}pdfs/${id}`);
+  }
 }
