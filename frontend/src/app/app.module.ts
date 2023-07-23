@@ -19,6 +19,7 @@ import { DragAndDropDirective } from './directives/drag-and-drop.directive';
 import {FormsModule} from "@angular/forms";
 import { DeleteDialogComponent } from './components/delete-dialog/delete-dialog.component';
 import {MatDialogModule} from '@angular/material/dialog';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import {MatDialogModule} from '@angular/material/dialog';
     MatSnackBarModule,
     MatChipsModule,
     FormsModule,
-    MatDialogModule
+    MatDialogModule,
+    MatProgressSpinnerModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

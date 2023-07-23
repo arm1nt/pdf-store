@@ -1,20 +1,33 @@
-<div class="file-upload-container" appDragAndDrop (dropped)="uploadFile2($event)">
-  <span class="upload-information">Drop files to upload here.</span>
-  <input id="file-upload-in-box" type="file" multiple  (change)="uploadFile($event)" style="border: 2px solid green"/>
+<div class="file-upload-container" appDragAndDrop (dropped)="addToFileArrayFromDrop($event)">
+  <span class="material-symbols-outlined upload-file-icon">upload_file</span>
+  <span class="upload-information">Drop files here.</span>
+  <input id="file-upload-in-box" type="file" accept="application/pdf" multiple  (change)="addToFileArrayFromInput($event)" style="border: 2px solid green"/>
   <label class="upload-label" for="file-upload-in-box">Browse for Files</label>
 </div>
 
-<div class="file-upload-overview">
-  <h2 style="text-align: center">Selected Pdfs</h2>
+<div *ngIf="progressSpinner" class="upload-spinner">
+  <mat-spinner></mat-spinner>
+</div>
 
-  <div class="file-upload-summary" *ngFor="let file of files; let indexOfElement=index">
+<div class="file-upload-overview-container">
+
+  <h2 style="text-align: center">Chosen Pdfs</h2>
+
+  <div *ngIf="this.files.length" class="number-of-files-clear-container">
+    <span class="number-of-files">Number of selected pdfs: {{this.files.length}}</span>
+    <span class="upload-clear-button" (click)="clearSelectedFiles()">Clear</span>
+  </div>
+
+  <div class="file-upload-overview">
+    <div class="file-upload-summary" *ngFor="let file of files; let indexOfElement=index">
     <span style="display: flex; flex-direction: row; justify-content: space-between; width: 100%">
       <span class="pdf-upload-name">{{file.name}}</span>
-      <span class="pdf-upload-trash-section"><span class="material-symbols-outlined pdf-upload-trash-icon" (click)="removeFromPossibleUploads(indexOfElement)">delete</span></span>
+      <span class="pdf-upload-trash-section"><span class="material-symbols-outlined pdf-upload-trash-icon" (click)="removeFromFileArray(indexOfElement)">delete</span></span>
     </span>
+    </div>
   </div>
 </div>
 
 <div class="upload-button-container">
-  <span class="upload-button" (click)="uploadFiles()">Upload</span>
+  <span id="upload-button" class="upload-button" (click)="uploadFiles()">Upload</span>
 </div>

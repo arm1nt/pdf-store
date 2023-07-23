@@ -32,6 +32,7 @@
   padding: 0.5em;
   border-radius: 7px;
   margin-bottom: 2em;
+  text-align: center;
 }
 
 .file-upload-container input {
@@ -44,12 +45,26 @@
   left: 0;
 }
 
-.file-upload-overview {
+.file-upload-overview-container {
   width: 50%;
   max-width: 1000px;
   margin: 4em auto auto;
   background-color: rgba(218, 218, 218, 0.8);
-  max-height: 700px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 6px;
+  padding-bottom: 1em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+}
+
+.file-upload-overview {
+  width: 100%;
+  max-width: 1000px;
+  margin: 2em auto auto;
+  background-color: transparent;
+  max-height: 400px;
   overflow-y: auto;
   border-radius: 6px;
   display: flex;
@@ -68,7 +83,10 @@
   word-break: break-all;
   display: flex;
   justify-content: space-between;
+}
 
+.file-upload-summary:first-child {
+  margin-top: 0.7em;
 }
 
 .upload-button-container {
@@ -89,6 +107,7 @@
 
 .upload-button:hover {
   transform: scale(1.05);
+  margin-bottom: 1em;
 }
 
 .pdf-upload-name {
@@ -105,4 +124,65 @@
 
 .pdf-upload-trash-icon {
   cursor: pointer;
+}
+
+.number-of-files-clear-container {
+  width: 95%;
+  margin: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+}
+.number-of-files {
+  font-family: 'DM Sans', sans-serif;
+  word-break: break-all;
+}
+
+.upload-clear-button {
+  color: white;
+  background-color: #a4a4a4;
+  border-radius: 4px;
+  padding: 0.5em 0.6em;
+  cursor: pointer;
+}
+
+.upload-clear-button:hover {
+  transform: scale(1.01);
+  box-shadow: 1px 1px 3px gray;
+}
+
+.upload-file-icon {
+  margin: 2em auto 0.75em;
+  color: white;
+  transform: scale(2.6);
+}
+
+.upload-spinner {
+  width: 50%;
+  max-width: 1000px;
+  margin: 3em auto auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+@media(max-width: 800px) {
+  .file-upload-container {
+    width: 95%;
+  }
+
+  .file-upload-overview-container {
+    width: 95%;
+  }
+
+  .number-of-files-clear-container {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+  }
+
 }
