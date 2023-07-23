@@ -1,5 +1,5 @@
 <div class="overview-container">
-  <input id="pdf-search" type="text" placeholder="Search..." [(ngModel)]="search_title" (keydown.enter)="search()">
+  <input id="pdf-search" type="text" placeholder="Search..." [(ngModel)]="search_bind_title" (keydown.enter)="search()">
   <span id="search-expand-details">
     <span *ngIf="expand_detail_view" class="material-symbols-outlined details-expand-style" (click)="showDetailView()">expand_less</span>
     <span *ngIf="!expand_detail_view" class="material-symbols-outlined details-expand-style" (click)="showDetailView()">expand_more</span>
@@ -8,8 +8,8 @@
 </div>
 <div *ngIf="expand_detail_view" class="detailed-search">
   <div class="detail-view1">
-    <input class="detail-search-input" placeholder="Author..." [(ngModel)]="search_author" (keydown.enter)="search()">
-    <input class="detail-search-input" placeholder="Tags..." [(ngModel)]="search_tags" (keydown.enter)="search()">
+    <input class="detail-search-input" placeholder="Author..." [(ngModel)]="search_bind_author" (keydown.enter)="search()">
+    <input class="detail-search-input" placeholder="Tags..." [(ngModel)]="search_bind_tags" (keydown.enter)="search()">
   </div>
   <div class="detail-view2">
     <div class="search-clear-button" (click)="clear()">Clear</div>
@@ -17,15 +17,37 @@
 </div>
 
 
-<div class="pdfOverview-container">
+<div *ngIf="!loadError && !noResults" class="pdfOverview-container">
   <div *ngFor="let pdf of pdfs" class="pdfbox" routerLink="/detail/{{pdf.id}}">
     <img src="data:image/jpeg;base64, {{pdf.picture}}" style="align-self: center; justify-self: center" width="125">
     <span title="{{pdf.title}}" style="align-self: center; justify-self: center; margin-top: 0.5em; cursor: default">{{pdf.title.substring(0, 150)}}</span>
   </div>
 </div>
-<mat-paginator class="pagination" [length]="total_number_of_pages"
+
+<div *ngIf="noResults">
+  <div class="no-results" *ngIf="searchMode; else overViewMode">
+    There are no results matching your search query.
+  </div>
+  <ng-template #overViewMode>
+    <div class="no-results">
+      <span>You have not uploaded any pdfs yet.</span>
+      <span>Please click <span class="no-results-upload-redirect" routerLink="/upload">here</span> to upload pdfs</span>
+    </div>
+  </ng-template>
+</div>
+
+<div *ngIf="loadError" class="load-error">
+  <div >There was an error fetching your pdfs</div>
+  <span class="load-error-reload" (click)="reloadPdfs()">
+    <span class="material-symbols-outlined load-error-reload-icon">refresh</span>
+  </span>
+</div>
+
+
+<mat-paginator id="overview-pagination" class="pagination" [length]="total_number_of_pages"
                (page)="getNextPage($event)"
                [pageSize]="24"
+               [pageIndex]="page-1"
                [hidePageSize]="true"
           >
 </mat-paginator>

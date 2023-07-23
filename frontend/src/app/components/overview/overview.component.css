@@ -169,3 +169,55 @@
   max-width: 1600px;
   margin: auto;
 }
+
+.load-error {
+  max-width: 1600px;
+  margin: 1.2em auto auto;
+  width: 90%;
+  font-size: xx-large;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  font-family: 'DM Sans', sans-serif;
+  align-items: center;
+  cursor: default;
+}
+
+.load-error-reload {
+  background-color: #b00909;
+  color: white;
+  margin-top: 0.65em;
+  border-radius: 7px;
+  padding: 0.5em 0.2em;
+  width: 8%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  min-width: 90px;
+}
+
+.load-error-reload-icon {
+  font-weight: bolder;
+  transform: rotate(270deg) scale(1.2);
+}
+
+.no-results {
+  max-width: 1600px;
+  width: 90%;
+  margin: 1.2em auto auto;
+  text-align: center;
+  font-family: 'DM Sans', sans-serif;
+  font-size: x-large;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+}
+
+.no-results-upload-redirect {
+  color: #b00909;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: underline;
+
+}
