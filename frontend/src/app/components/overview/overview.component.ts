@@ -56,6 +56,18 @@ export class OverviewComponent implements OnInit {
           this.search_tags =  params['tag'] || undefined;
           this.page = params['page'] || 1;
 
+          if (this.page < 1) {
+            this.page = 1;
+
+            this.router.navigate([], {
+              relativeTo: this.activatedRoute,
+              queryParams: {
+                'page': this.page
+              },
+              queryParamsHandling: 'merge'
+            });
+          }
+
           this.search_bind_title = this.search_title;
           this.search_bind_author = this.search_author;
           this.search_bind_tags = this.search_tags;
@@ -195,6 +207,12 @@ export class OverviewComponent implements OnInit {
         this.pdfs = data.pdfs_previews;
         this.total_number_of_pages = data.count;
 
+        if ( this.page > Math.ceil(this.total_number_of_pages / this.size)) {
+          this.page = Math.ceil(this.total_number_of_pages / this.size);
+          this.adjustQueryParamsUrl(null, null, null, this.page);
+          this.getAllPdfs(this.page, this.size);
+        }
+
         this.noResults = data.count == 0 || data.pdfs_previews.length == 0;
 
       },
@@ -218,6 +236,14 @@ export class OverviewComponent implements OnInit {
       },
       queryParamsHandling: "merge"
     });
+  }
+
+  private validPage(): boolean {
+    if (!this.total_number_of_pages) {
+      return false;
+    }
+
+    return (this.page <= Math.ceil(this.total_number_of_pages / this.size)) || (this.page < 1);
   }
 
 
