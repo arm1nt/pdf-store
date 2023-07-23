@@ -207,8 +207,10 @@ export class OverviewComponent implements OnInit {
         this.pdfs = data.pdfs_previews;
         this.total_number_of_pages = data.count;
 
-        if ( this.page > Math.ceil(this.total_number_of_pages / this.size)) {
-          this.page = Math.ceil(this.total_number_of_pages / this.size);
+        let max_page = Math.ceil(this.total_number_of_pages / this.size);
+
+        if (max_page> 0 && this.page > max_page) {
+          this.page = max_page;
           this.adjustQueryParamsUrl(null, null, null, this.page);
           this.getAllPdfs(this.page, this.size);
         }
