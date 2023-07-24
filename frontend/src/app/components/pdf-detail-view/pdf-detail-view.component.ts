@@ -64,7 +64,7 @@ export class PdfDetailViewComponent implements OnInit {
           title: value.title,
           author: value.author,
           comments: value.comments,
-          tags: value.tags,
+          tags: JSON.parse(JSON.stringify(value.tags)),
           picture: value.picture
         }
       },
@@ -188,12 +188,17 @@ export class PdfDetailViewComponent implements OnInit {
   revertEditChanges() {
     this.pdfUpdate.author = this.pdfDetails?.author || "";
     this.pdfUpdate.title = this.pdfDetails?.title || "";
-    this.pdfUpdate.tags = this.pdfDetails?.tags || [];
+    if (this.pdfDetails) {
+      this.pdfUpdate.tags = JSON.parse(JSON.stringify(this.pdfDetails.tags));
+    } else {
+      this.pdfUpdate.tags = [];
+    }
     this.pdfUpdate.comments = this.pdfDetails?.comments || "";
   }
 
   cancelEdit() {
     this.revertEditChanges();
+    this.editMode = false;
   }
 
   saveEdit() {

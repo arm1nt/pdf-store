@@ -19,6 +19,11 @@
   cursor: pointer;
 }
 
+.return-to-overview:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 15px 15px rgba(0, 0, 0, 0.05);
+}
+
 .return-to-overview-icon {
   margin-right: 0.5em
 }
@@ -79,8 +84,18 @@
   margin-right: 1em;
 }
 
+.download:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 15px 15px rgba(0, 0, 0, 0.05);
+}
+
 .view {
   background-color: #b00909;
+}
+
+.view:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 15px 15px rgba(0, 0, 0, 0.05);
 }
 
 .information-container {
@@ -149,9 +164,17 @@
   gap: 20px;
 }
 
+.detail-delete-editing-info {
+  margin-bottom: 2.5em;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+}
+
 .detail-delete-edit-button {
   background-color: #b00909;
-  width: 7%;
+  width: 9%;
   height: 2em;
   color: white;
   display: flex;
@@ -159,7 +182,26 @@
   justify-content: center;
   align-items: center;
   border-radius: 5px;
-  min-width: 50px;
+  min-width: 65px;
+  cursor: pointer;
+}
+
+.detail-delete-edit-button:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 15px 15px rgba(0, 0, 0, 0.05);
+}
+
+.edit-message {
+  font-family: 'DM Sans', sans-serif;
+  /*background-color: #fcab20;*/
+  background-color: #e5e3e3;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 30%;
+  text-align: center;
+  height: 2em;
 }
 
 .chip-list {
@@ -179,9 +221,29 @@
   border-radius: 5px;
   width: 8%;
   text-align: center;
-  padding: 0.4em;
   min-width: 50px;
   cursor: pointer;
+  padding: 0.5em 0.4em 0.4em;
+  align-self: center;
+}
+
+.cancel-edit-button:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 15px 15px rgba(0, 0, 0, 0.05);
+}
+
+.delete-button {
+
+}
+
+.edit-button {
+  color: #968d14;
+  background-color: #f3e50b;
+}
+
+.cancel-button {
+  color: #64590d;
+  background-color: #f3e50b;
 }
 
 .cancel-edit {
@@ -204,6 +266,28 @@
   .information-container {
     width: 100%;
     margin-top: 8em;
+  }
+
+  .detail-delete-edit {
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  .detail-delete-edit-button {
+    width: 35%;
+    height: 2.4em;
+  }
+
+  .delete-cancel-edit-container {
+    justify-content: space-around;
+  }
+
+  .cancel-edit-button {
+    width: 33%;
+    height: 1.7em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
 }

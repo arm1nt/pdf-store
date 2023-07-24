@@ -7,29 +7,36 @@
 
   <div class="img-download-container">
     <img class="detail-image" src="data:image/jpeg;base64, {{pdfDetails.picture}}" width="60%">
-    <span class="download-view-button-container">
+    <span *ngIf="!editMode" class="download-view-button-container">
       <span class="button download" (click)="getPdf(true)">Download</span>
       <span class="button view" (click)="getPdf(false)">View</span>
     </span>
   </div>
   <div class="information-container unselectable">
-    <span class="detail-delete-edit">
-      <span class="detail-delete-edit-button" (click)="toggleEditMode()"><span class="material-symbols-outlined">edit</span></span>
-      <span class="detail-delete-edit-button" (click)="deletePdf()"><span class="material-symbols-outlined">delete</span></span>
+    <span *ngIf="!editMode" class="detail-delete-edit">
+      <span *ngIf="!editMode" class="detail-delete-edit-button edit-button" (click)="toggleEditMode()"><span class="material-symbols-outlined">edit</span></span>
+      <span class="detail-delete-edit-button delete-button" (click)="deletePdf()"><span class="material-symbols-outlined">delete</span></span>
     </span>
 
-    <mat-form-field appearance="outline" class="detail-title" floatLabel="always">
+    <span *ngIf="editMode" class="detail-delete-editing-info">
+      <span class="edit-message">Currently Editing PDF</span>
+      <span class="detail-delete-edit-button delete-button" (click)="deletePdf()"><span class="material-symbols-outlined">delete</span></span>
+    </span>
+
+
+
+    <mat-form-field id="input-form-field" appearance="outline" class="detail-title" floatLabel="always">
       <mat-label>Title</mat-label>
-      <input class="unselectable" matInput type="text" [(ngModel)]="pdfUpdate.title" [disabled]="!editMode">
+      <input id="input-title" matInput type="text" [(ngModel)]="pdfUpdate.title" [disabled]="!editMode">
     </mat-form-field>
     <mat-form-field appearance="outline" class="detail-title" floatLabel="always">
       <mat-label>Author</mat-label>
-      <input class="unselectable" matInput type="text" [(ngModel)]="pdfUpdate.author" [disabled]="!editMode" placeholder="">
+      <input matInput type="text" [(ngModel)]="pdfUpdate.author" [disabled]="!editMode" placeholder="">
     </mat-form-field>
     <div *ngIf="!editMode" class="uploaded-pages-container">
       <mat-form-field appearance="outline" class="uploaded-pages-form-field">
         <mat-label>Uploaded</mat-label>
-        <input class="unselectable" matInput value="{{(!pdfDetails.uploaded) ? 'N/A' : pdfDetails.uploaded}}" disabled>
+        <input class="unselectable" matInput value="{{pdfDetails.uploaded | date:'MMM d, y, h:mm a'}}" disabled>
       </mat-form-field>
       <mat-form-field appearance="outline" class="uploaded-pages-form-field">
         <mat-label>Pages</mat-label>
@@ -62,11 +69,11 @@
 
     <mat-form-field appearance="outline" floatLabel="always">
       <mat-label>Comments</mat-label>
-      <textarea class="unselectable" matInput [disabled]="!editMode" [(ngModel)]="pdfUpdate.comments"></textarea>
+      <textarea matInput [disabled]="!editMode" [(ngModel)]="pdfUpdate.comments"></textarea>
     </mat-form-field>
 
     <div *ngIf="editMode" class="delete-cancel-edit-container">
-      <span class="cancel-edit-button" (click)="cancelEdit()">Cancel</span>
+      <span class="cancel-edit-button cancel-button" (click)="cancelEdit()">Cancel</span>
       <span class="cancel-edit-button" (click)="saveEdit()">Save</span>
     </div>
 
