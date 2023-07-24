@@ -1,0 +1,31 @@
+[package]
+name = "pdf-store"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-web = "4.3"
+actix-multipart = "0.6.0"
+actix-cors = "0.6.4"
+actix-files = "0.6.2"
+
+dotenv = "0.15.0"
+env_logger = "^0.10"
+log = "^0.4"
+
+
+mime = "0.3.16"
+
+pdfium-render = "0.8.6"
+image = "0.24.6"
+
+serde = { version = "^1", features = ["derive"] }
+serde_json = "1.0"
+
+base64 = "0.21.2"
+chrono = { version = "^0.4", features = ["serde"] }
+
+sqlx = { version = "0.7.0", features = ["chrono", "runtime-async-std-native-tls", "postgres", "uuid"]}
+uuid = { version = "^1.4", features = ["serde", "v4"] }
