@@ -30,12 +30,13 @@ async fn main() -> Result<()> {
     let backend_port = env::var("BACKEND_PORT").unwrap_or("8080".to_string());
 
     info!("Starting HTTP Server at {backend_url}:{backend_port}");
+
     
     HttpServer::new(move || {
         let cors = Cors::permissive();
 
         App::new()
-            .wrap(middleware::Logger::default())
+            .wrap(middleware::Logger::new("%a \"%r\" Status: %s (Req size: %{Content-Length}i) (Time: %T) \"%{Referer}i\""))
             .wrap(cors)
             .app_data(Data::new(AppState {db: database_connection.clone()}))
             .service(api::health::health)
