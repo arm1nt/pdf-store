@@ -1,2 +1,2 @@
-pub mod health;
-pub mod pdf;
+pub mod controllers;
+pub mod dto;

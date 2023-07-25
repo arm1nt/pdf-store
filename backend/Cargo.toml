@@ -15,7 +15,6 @@ dotenv = "0.15.0"
 env_logger = "^0.10"
 log = "^0.4"
 
-
 mime = "0.3.16"
 
 pdfium-render = "0.8.6"
@@ -29,3 +28,9 @@ chrono = { version = "^0.4", features = ["serde"] }
 
 sqlx = { version = "0.7.0", features = ["chrono", "runtime-async-std-native-tls", "postgres", "uuid"]}
 uuid = { version = "^1.4", features = ["serde", "v4"] }
+
+futures-util = "0.3.25"
+
+tokio = { version = "1.24.1", features = ["fs"] }
+
+async-trait = "0.1.58"

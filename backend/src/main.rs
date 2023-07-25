@@ -1,17 +1,26 @@
 use std::io::Result;
+use std::sync::Arc;
 use actix_cors::Cors;
-use actix_web::{HttpServer, App, web::Data, middleware};
+use actix_web::{HttpServer, App, web::Data, middleware, web};
 use env_logger::{init_from_env, Env};
+use service::pdf::PdfServiceImpl;
+use sqlx::{Pool, Postgres};
 use std::env;
 use log::info;
-use sqlx::{Pool, Postgres};
+
+use crate::api::controllers::health_handler::health;
+use crate::api::controllers::pdf_handler::{get_all, get_by_id, get_metadata_by_id};
+use crate::repository::pdfs::PdfRepositoryImpl;
 
 pub mod api;
 pub mod util;
 pub mod repository;
+pub mod model;
+pub mod service;
+pub mod errors;
 
 pub struct AppState {
-    db: Pool<Postgres>
+    service: PdfServiceImpl
 }
 
 #[actix_web::main]
@@ -25,23 +34,39 @@ async fn main() -> Result<()> {
         .await
         .expect("Error connecting to database");
 
-    
-    let backend_url = env::var("BACKEND_URL").unwrap_or("http://localhost".to_string());
+    let backend_url = env::var("BACKEND_URL").unwrap_or("127.0.0.1".to_string());
     let backend_port = env::var("BACKEND_PORT").unwrap_or("8080".to_string());
 
-    info!("Starting HTTP Server at {backend_url}:{backend_port}");
+    info!("Starting HTTP Server at http://{backend_url}:{backend_port}");
 
     
     HttpServer::new(move || {
         let cors = Cors::permissive();
 
+        let pdf_repository = PdfRepositoryImpl {
+            pool: Arc::new(database_connection.clone())
+        };
+
+        let pdf_service = PdfServiceImpl {
+            repository: Arc::new(pdf_repository)
+        };
+
         App::new()
             .wrap(middleware::Logger::new("%a \"%r\" Status: %s (Req size: %{Content-Length}i) (Time: %T) \"%{Referer}i\""))
             .wrap(cors)
-            .app_data(Data::new(AppState {db: database_connection.clone()}))
-            .service(api::health::health)
+            .app_data(Data::new(AppState {service: pdf_service.clone()}))
+            .service(
+                web::scope("/health")
+                    .route("", web::get().to(health))
+            )
+            .service(
+                web::scope("/pdfs")
+                    .route("", web::get().to(get_all))
+                    .route("/{pdf_id}", web::get().to(get_by_id))
+                    .route("/metadata/{pdf_id}", web::get().to(get_metadata_by_id))
+            )
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind(("127.0.0.1", 8081))?
     .workers(3)
     .run()
     .await
