@@ -38,3 +38,13 @@ pub struct PdfSearchDto {
     pub page: Option<i32>,
     pub size: Option<i32>
 }
+
+#[derive(Debug, Deserialize)]
+pub struct PdfUpdateDto {
+    pub id: Option<String>,
+    pub title: Option<String>,
+    pub author: Option<String>,
+    pub comments: Option<String>,
+    pub tags: Option<Vec<String>>,
+    pub picture: Option<String>
+}

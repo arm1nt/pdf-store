@@ -8,7 +8,7 @@ use std::env;
 use log::info;
 
 use crate::api::controllers::health_handler::health;
-use crate::api::controllers::pdf_handler::{get_all, get_by_id, get_metadata_by_id, search};
+use crate::api::controllers::pdf_handler::{get_all, get_by_id, get_metadata_by_id, search, update};
 use crate::repository::pdfs::PdfRepositoryImpl;
 
 pub mod api;
@@ -64,7 +64,7 @@ async fn main() -> Result<()> {
                     .route("/search", web::get().to(search))
                     .route("/{pdf_id}", web::get().to(get_by_id))
                     .route("/metadata/{pdf_id}", web::get().to(get_metadata_by_id))
-                    
+                    .route("/{pdf_id}", web::put().to(update))       
             )
     })
     .bind(("127.0.0.1", 8081))?

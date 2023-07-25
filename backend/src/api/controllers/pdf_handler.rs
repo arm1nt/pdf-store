@@ -15,7 +15,7 @@ use base64::Engine as _;
 use sqlx::{self, QueryBuilder, Postgres};
 use chrono::prelude::*;
 
-use crate::{AppState, errors::PdfMetadataByIdError, service::{self, pdf::PdfService}, api::dto::pdf::PdfSearchDto};
+use crate::{AppState, errors::PdfMetadataByIdError, service::{self, pdf::PdfService}, api::dto::pdf::{PdfSearchDto, PdfUpdateDto}};
 use crate::api::dto::paging::PagingDto;
 use crate::api::dto::error::ErrorDto;
 
@@ -100,13 +100,7 @@ pub async fn search(state: Data<AppState>, search: web::Query<PdfSearchDto>) -> 
         return HttpResponse::BadRequest().json(ErrorDto { message: "Search parameters are required".to_string() });
     }
 
-    let search_dto = PdfSearchDto {
-        title: search.title.to_owned(),
-        author: search.author.to_owned(),
-        tag: search.tag.to_owned(),
-        page: search.page,
-        size: search.size
-    };
+    let search_dto = search.into_inner();
 
     let search_res = state.service.search(&search_dto).await;
 
@@ -115,4 +109,28 @@ pub async fn search(state: Data<AppState>, search: web::Query<PdfSearchDto>) -> 
         Err(msg) => return HttpResponse::InternalServerError().json(ErrorDto { message: msg })
         
     }
+}
+
+
+pub async fn update(state: Data<AppState>, update: web::Json<PdfUpdateDto>, id: web::Path<String>) -> impl Responder {
+    info!("update()");
+
+    let id_string = id.into_inner();
+    let pdf_id = String::as_str(&id_string);
+    let pdf_id = Uuid::parse_str(pdf_id);
+
+    match pdf_id {
+        Err(_) => return HttpResponse::BadRequest().json(ErrorDto { message: "Invalid pdf ID given".to_string() }),
+        _ => ()
+    }
+
+    let update = update.into_inner();
+
+    let update_res = state.service.update(update, &pdf_id.unwrap()).await;
+
+    match update_res {
+        Ok(updated_pdf_dto) => HttpResponse::Ok().json(updated_pdf_dto),
+        Err(msg) => HttpResponse::InternalServerError().json(ErrorDto { message: msg })
+    }
+
 }
