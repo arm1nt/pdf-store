@@ -27,6 +27,8 @@ pub trait PdfRepository: Send + Sync {
 
     async fn update(&self, update: PdfUpdateDto, pdf_id: &Uuid) -> Result<PdfMetadataDto, String>;
 
+    async fn delete(&self, id: &Uuid) -> Result<String, String>;
+
 }
 
 pub struct PdfRepositoryImpl {
@@ -369,6 +371,33 @@ impl PdfRepository for PdfRepositoryImpl {
         Ok(return_dto)
     }
 
+    async fn delete(&self, pdf_id: &Uuid) -> Result<String, String> {
+        trace!("repository: delete()");
+
+        let file_name_to_delete_res = sqlx::query!(
+            "SELECT file_name FROM pdfs where id=$1",
+            pdf_id
+        )
+        .fetch_one(self.pool.as_ref())
+        .await;
+
+        match file_name_to_delete_res {
+            Err(_) => return Err("Failed to delete pdf".to_string()),
+            _ => ()
+        }
+
+        let delete_result = sqlx::query!(
+            "DELETE FROM pdfs WHERE id=$1",
+            pdf_id
+        )
+        .execute(self.pool.as_ref())
+        .await;
+
+        match delete_result {
+            Ok(_) => Ok(file_name_to_delete_res.unwrap().file_name),
+            Err(_)=> Err("Failed to delete pdf".to_string())
+        }
+    }
     
 
 }

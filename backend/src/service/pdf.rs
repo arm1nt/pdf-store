@@ -24,6 +24,8 @@ pub trait PdfService {
     async fn search(&self, search: &PdfSearchDto) -> Result<PdfOverviewDto, String>;
 
     async fn update(&self, update: PdfUpdateDto, pdf_id: &Uuid) -> Result<PdfMetadataDto, String>;
+
+    async fn delete(&self, pdf_id: &Uuid) -> Result<(), String>;
 }
 
 
@@ -130,6 +132,26 @@ impl PdfService for PdfServiceImpl {
             Err(msg) => Err(msg),
             Ok(updated_pdf_dto) => Ok(updated_pdf_dto)
         }        
+    }
+
+
+    async fn delete(&self, pdf_id: &Uuid) -> Result<(), String> {
+        trace!("service: delete()");
+
+        let delete_from_db_res = self.repository.delete(pdf_id).await;
+
+        let file_name;
+
+        match delete_from_db_res {
+            Err(msg) => return Err(msg),
+            Ok(name) => file_name = name
+        }
+
+        let path = format!("./upload/{}", file_name);
+        let _ = std::fs::remove_file(path); //Not too important whether this succeeds or not
+
+        Ok(())
+
     }
     
 }

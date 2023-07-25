@@ -134,3 +134,24 @@ pub async fn update(state: Data<AppState>, update: web::Json<PdfUpdateDto>, id: 
     }
 
 }
+
+
+pub async fn delete(state: Data<AppState>, id: web::Path<String>) -> impl Responder {
+    info!("delete()");
+
+    let id_string = id.into_inner();
+    let pdf_id = String::as_str(&id_string);
+    let pdf_id = Uuid::parse_str(pdf_id);
+
+    match pdf_id {
+        Err(_) => return HttpResponse::BadRequest().json(ErrorDto { message: "Invalid pdf ID given".to_string() }),
+        _ => ()
+    }
+
+    let delete_res = state.service.delete(&pdf_id.unwrap()).await;
+
+    match delete_res {
+        Ok(_) => HttpResponse::Ok().json(()),
+        Err(msg) => HttpResponse::InternalServerError().json(ErrorDto { message: msg })
+    }
+}
