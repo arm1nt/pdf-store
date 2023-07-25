@@ -5,7 +5,7 @@ use log::trace;
 use std::sync::Arc;
 use async_trait::async_trait;
 use uuid::Uuid;
-use crate::{api::dto::{paging::PagingDto, pdf::{PdfOverviewDto, PdfMetadataDto, PdfDto}}, repository::pdfs::PdfRepository, errors::PdfMetadataByIdError};
+use crate::{api::dto::{paging::PagingDto, pdf::{PdfOverviewDto, PdfMetadataDto, PdfDto, PdfSearchDto}}, repository::pdfs::PdfRepository, errors::PdfMetadataByIdError};
 
 
 #[derive(Clone)]
@@ -20,6 +20,8 @@ pub trait PdfService {
     async fn get_pdf_metadata(&self, pdfId: &Uuid) -> Result<PdfMetadataDto, PdfMetadataByIdError>;
 
     async fn get_by_id(&self, pdf_id: &Uuid) -> Result<PdfDto, String>;
+
+    async fn search(&self, search: &PdfSearchDto) -> Result<PdfOverviewDto, String>;
 }
 
 
@@ -102,6 +104,18 @@ impl PdfService for PdfServiceImpl {
         let to_base64 = general_purpose::STANDARD.encode(&pdf_content.unwrap());
 
         return Ok(PdfDto { pdf: to_base64 });
+    }
+
+
+    async fn search(&self, search: &PdfSearchDto) -> Result<PdfOverviewDto, String> {
+        trace!("service: search()");
+
+        let search_res = self.repository.search(search).await;
+
+        match search_res {
+            Ok(search_res_deto) => Ok(search_res_deto),
+            Err(msg) => Err(msg)
+        }
     }
     
 }

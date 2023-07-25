@@ -4,7 +4,7 @@ use log::trace;
 use sqlx::{Pool, Postgres, Transaction};
 use uuid::Uuid;
 
-use crate::{model::pdf::{PdfPaging, PdfOverview, Pdf, Tag}, api::dto::paging::PagingDto};
+use crate::{model::pdf::{PdfPaging, PdfOverview, Pdf, Tag, TotalPageNumber}, api::dto::{paging::PagingDto, pdf::{PdfSearchDto, PdfOverviewDto}}};
 use crate::errors::PdfMetadataByIdError;
 
 use async_trait::async_trait;
@@ -20,6 +20,8 @@ pub trait PdfRepository: Send + Sync {
     async fn get_associated_tags_of_pdf(&self, pdf_id: &Uuid) -> Result<Vec<String>, PdfMetadataByIdError>;
 
     async fn get_by_id(&self, pdf_id: &Uuid) -> Result<String, String>;
+
+    async fn search(&self, search: &PdfSearchDto) -> Result<PdfOverviewDto, String>;
 
 }
 
@@ -136,5 +138,65 @@ impl PdfRepository for PdfRepositoryImpl {
         }
     }
 
-    
+
+    async fn search(&self, search: &PdfSearchDto) -> Result<PdfOverviewDto, String> {
+        trace!("repository: search()");
+
+        let size: i64 = search.size.unwrap() as i64;
+        let page: i64 = size * (search.page.unwrap() - 1) as i64; 
+
+        let search_query = String::from(
+            "
+            SELECT DISTINCT pdfs.id, pdfs.title, pdfs.picture, pdfs.time_added FROM pdfs LEFT JOIN tags_to_pdfs ON pdfs.id = tags_to_pdfs.id  
+            WHERE
+            ($1 IS NULL OR pdfs.title ILIKE CONCAT('%', $1, '%'))
+            AND ($2 IS NULL OR pdfs.author ILIKE CONCAT('%', $2, '%'))
+            AND ($3 IS NULL OR tags_to_pdfs.name ILIKE CONCAT('%', $3, '%'))
+            ORDER BY pdfs.time_added, pdfs.id LIMIT $4 OFFSET $5
+            "
+        );
+
+        let count_query = String::from(
+            "
+            SELECT count(DISTINCT pdfs.id) FROM pdfs LEFT JOIN tags_to_pdfs ON pdfs.id = tags_to_pdfs.id  
+            WHERE
+            ($1 IS NULL OR pdfs.title ILIKE CONCAT('%', $1, '%'))
+            AND ($2 IS NULL OR pdfs.author ILIKE CONCAT('%', $2, '%'))
+            AND ($3 IS NULL OR tags_to_pdfs.name ILIKE CONCAT('%', $3, '%'))
+            "
+        );
+
+        let search_pfd_res = sqlx::query_as::<_,PdfOverview>(&search_query)
+            .bind(search.title.to_owned())
+            .bind(search.author.to_owned())
+            .bind(search.tag.to_owned())
+            .bind(size)
+            .bind(page)
+            .fetch_all(self.pool.as_ref())
+            .await;
+
+        match search_pfd_res {
+            Err(_) => return Err("An error occured searching the pdfs".to_string()),
+            _ => ()
+        }
+
+        let search_count_res = sqlx::query_as::<_,TotalPageNumber>(&count_query)
+            .bind(search.title.to_owned())
+            .bind(search.author.to_owned())
+            .bind(search.tag.to_owned())
+            .bind(size)
+            .bind(page)
+            .fetch_one(self.pool.as_ref())
+            .await;
+
+        match search_count_res {
+            Err(_) => return Err("An error occured searching the pdfs".to_string()),
+            _ => ()   
+        }
+
+
+        return Ok(PdfOverviewDto { pdfs_previews: search_pfd_res.unwrap(), count: search_count_res.unwrap().count });
+    }
+
+
 }

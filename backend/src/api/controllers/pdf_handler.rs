@@ -15,7 +15,7 @@ use base64::Engine as _;
 use sqlx::{self, QueryBuilder, Postgres};
 use chrono::prelude::*;
 
-use crate::{AppState, errors::PdfMetadataByIdError, service::{self, pdf::PdfService}};
+use crate::{AppState, errors::PdfMetadataByIdError, service::{self, pdf::PdfService}, api::dto::pdf::PdfSearchDto};
 use crate::api::dto::paging::PagingDto;
 use crate::api::dto::error::ErrorDto;
 
@@ -85,5 +85,34 @@ pub async fn get_by_id(state: Data<AppState>, id: web::Path<String>) -> impl Res
     match pdf_res {
         Ok(pdf_dto) => return HttpResponse::Ok().json(pdf_dto),
         Err(msg) => return HttpResponse::InternalServerError().json(ErrorDto { message: msg })
+    }
+}
+
+
+pub async fn search(state: Data<AppState>, search: web::Query<PdfSearchDto>) -> impl Responder {
+    info!("search()");
+
+    if search.page.is_none() || search.size.is_none() {
+        return HttpResponse::BadRequest().json(ErrorDto { message: "Paging information is required".to_string() });
+    }
+
+    if search.title.is_none() && search.author.is_none() && search.tag.is_none() {
+        return HttpResponse::BadRequest().json(ErrorDto { message: "Search parameters are required".to_string() });
+    }
+
+    let search_dto = PdfSearchDto {
+        title: search.title.to_owned(),
+        author: search.author.to_owned(),
+        tag: search.tag.to_owned(),
+        page: search.page,
+        size: search.size
+    };
+
+    let search_res = state.service.search(&search_dto).await;
+
+    match search_res {
+        Ok(search_res_dto) => return HttpResponse::Ok().json(search_res_dto),
+        Err(msg) => return HttpResponse::InternalServerError().json(ErrorDto { message: msg })
+        
     }
 }

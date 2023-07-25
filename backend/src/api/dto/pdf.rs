@@ -29,3 +29,12 @@ pub struct PdfMetadataDto {
 pub struct PdfDto {
     pub pdf: String
 }
+
+#[derive(Debug, Deserialize)]
+pub struct PdfSearchDto {
+    pub title: Option<String>,
+    pub author: Option<String>,
+    pub tag: Option<String>,
+    pub page: Option<i32>,
+    pub size: Option<i32>
+}
