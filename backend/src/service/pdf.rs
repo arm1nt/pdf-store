@@ -1,18 +1,16 @@
-use actix_multipart::form::MultipartForm;
 use actix_web::web;
 use base64::Engine as _;
 use base64::engine::general_purpose;
 use log::trace;
-use mime::APPLICATION_PDF;
 use std::sync::Arc;
 use async_trait::async_trait;
 use uuid::Uuid;
-use crate::{api::dto::{paging::PagingDto, pdf::{PdfOverviewDto, PdfMetadataDto, PdfDto, PdfSearchDto, PdfUpdateDto}}, repository::pdfs::PdfRepository, errors::PdfMetadataByIdError, util::{get_preview_of_pdf, UploadForm}};
+use crate::{api::dto::{paging::PagingDto, pdf::{PdfOverviewDto, PdfMetadataDto, PdfDto, PdfSearchDto, PdfUpdateDto}}, repository::pdfs::PdfRepository, errors::PdfMetadataByIdError, util::PdfUploaded};
 
 
 #[derive(Clone)]
 pub struct PdfServiceImpl {
-    pub repository: Arc<dyn PdfRepository> 
+    pub repository: Arc<dyn PdfRepository>,
 }
 
 #[async_trait]
@@ -29,65 +27,35 @@ pub trait PdfService: {
 
     async fn delete(&self, pdf_id: &Uuid) -> Result<(), String>;
 
-    async fn upload(&self, MultipartForm(form): MultipartForm<UploadForm>) -> Result<(), String>;
+    async fn upload(&self, to_upload: Vec<PdfUploaded>) -> Result<(), String>;
 }
 
 
 #[async_trait]
 impl PdfService for PdfServiceImpl {
 
-    async fn upload(&self,  MultipartForm(form): MultipartForm<UploadForm>) -> Result<(), String> {
+    async fn upload(&self, to_upload: Vec<PdfUploaded>) -> Result<(), String> {
         trace!("service: upload()");
 
-        for file in form.files {
-            if file.content_type.is_none() {
-                continue;
-            }
-        
-            if !(file.content_type.unwrap() == APPLICATION_PDF) {
-                continue;
-            }
-        
-            let file_name = file.file_name.unwrap();
-            let file_name_temp = file_name.clone();
-        
-        
-            let path = format!("./upload/{}", file_name);
-            let path_cloned = path.clone();
-            let persist_file_fs = file.file.persist(path);
+        for upload in to_upload {
 
-            match persist_file_fs {
-                Err(_) => continue,
-                _ => ()
-            }
-
-            let pdf_info_res = get_preview_of_pdf(&path_cloned, String::as_str(&file_name_temp));
-
-            if pdf_info_res.is_err() {
-                std::fs::remove_file(path_cloned).unwrap();
-                continue;
-            }
-
-            let (img, title, author, pages) = pdf_info_res.unwrap();
-
-            let res = self.repository.upload(title, file_name_temp, author, pages, img).await;
+            let res = self.repository.upload(upload.title, upload.filename, upload.author, upload.pages, upload.img).await;
             match res {
                 Ok(_) => (),
                 Err(err) => {
                     if err.as_database_error().is_some() {
                         let code = err.as_database_error().unwrap().code().unwrap();
                         if code != "23505" {
-                            std::fs::remove_file(path_cloned).unwrap()
+                            std::fs::remove_file(upload.path).unwrap()
                         }            
                     } else {
-                        std::fs::remove_file(path_cloned).unwrap();
+                        std::fs::remove_file(upload.path).unwrap();
                     }
                 }
             }
         }
 
         Ok(())
-        
     }
 
 

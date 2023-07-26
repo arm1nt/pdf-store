@@ -1,7 +1,10 @@
+use log::trace;
 use actix_multipart::form::{MultipartForm, tempfile::TempFile};
 use base64::{engine::general_purpose, Engine};
 use image::ImageOutputFormat;
+use mime::APPLICATION_PDF;
 use pdfium_render::{prelude::{Pdfium, PdfiumError, PdfDocumentMetadataTagType}, render_config::PdfRenderConfig};
+use std::result::Result;
 
 #[derive(Debug, MultipartForm)]
 pub struct UploadForm {
@@ -9,14 +12,73 @@ pub struct UploadForm {
     pub files: Vec<TempFile>,
 }
 
+#[derive(Debug)]
+pub struct PdfUploaded {
+    pub title: String,
+    pub filename: String,
+    pub author: Option<String>,
+    pub pages: Option<i32>,
+    pub img: String,
+    pub path: String
+}
 
-pub fn get_preview_of_pdf(location: &String, filename: &str) -> std::result::Result<(String, String, Option<String>, Option<i32>), PdfiumError> {
 
-    let pdfium = Pdfium::new(
-        Pdfium::bind_to_library(Pdfium::pdfium_platform_library_name_at_path("./"))
-            .or_else(|_| Pdfium::bind_to_system_library())?,
-    );
+pub fn map_pdfs(MultipartForm(form): MultipartForm<UploadForm>) -> Result<Vec<PdfUploaded>, String> {
+    trace!("map_pdfs()");
 
+    let binding_res = Pdfium::bind_to_library(Pdfium::pdfium_platform_library_name_at_path("./"));
+
+    if binding_res.is_err() {
+        return Err("Error mapping pdf".to_string());
+    }
+
+    let pdfium = &Pdfium::new(binding_res.unwrap());
+
+    let mut pdf_to_upload: Vec<PdfUploaded> = Vec::new();
+    
+
+    for file in form.files {
+
+        if file.content_type.is_none() {
+            continue;
+        }
+
+        if !(file.content_type.unwrap() == APPLICATION_PDF) {
+            continue;
+        }
+
+        let file_name = file.file_name.unwrap();
+        let file_name_temp = file_name.clone();
+
+        let path = format!("./upload/{}", file_name);
+        let path_cloned = path.clone();
+        let persist_file_fs = file.file.persist(path);
+
+
+        if persist_file_fs.is_err() {
+            continue;
+        }
+
+        let pdf_info_res = get_preview_of_pdf_pdfium(&pdfium, &path_cloned, String::as_str(&file_name_temp));
+
+        if pdf_info_res.is_err() {
+            std::fs::remove_file(path_cloned).unwrap();
+            continue;
+        }
+
+        let (img, title, author, pages) = pdf_info_res.unwrap();
+
+        pdf_to_upload.push(PdfUploaded { title: title, filename: file_name_temp, author: author, pages: pages, img: img, path: path_cloned });
+    }
+
+
+    Ok(pdf_to_upload)
+
+}
+
+
+fn get_preview_of_pdf_pdfium(pdfium: &Pdfium, location: &String, filename: &str) -> std::result::Result<(String, String, Option<String>, Option<i32>), PdfiumError> {
+    
 
     let document = pdfium.load_pdf_from_file(String::as_str(location), None);
 
@@ -59,5 +121,7 @@ pub fn get_preview_of_pdf(location: &String, filename: &str) -> std::result::Res
     let base64image = general_purpose::STANDARD.encode(bytes);
 
     Ok((base64image, title, author, pages))
+    
+    //Ok((String::from("no"), title, author, pages))
 
 }

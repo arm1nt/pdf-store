@@ -3,7 +3,7 @@ use actix_web::{web::{ Data, self }, HttpResponse, Responder};
 use actix_multipart::form::MultipartForm;
 use uuid::Uuid;
 
-use crate::{AppState, errors::PdfMetadataByIdError, service::pdf::PdfService, api::dto::pdf::{PdfSearchDto, PdfUpdateDto}, util::UploadForm};
+use crate::{AppState, errors::PdfMetadataByIdError, service::pdf::PdfService, api::dto::pdf::{PdfSearchDto, PdfUpdateDto}, util::{UploadForm, map_pdfs}};
 use crate::api::dto::paging::PagingDto;
 use crate::api::dto::error::ErrorDto;
 
@@ -152,7 +152,13 @@ pub async fn delete(state: Data<AppState>, id: web::Path<String>) -> impl Respon
 pub async fn upload(state: Data<AppState>, MultipartForm(form): MultipartForm<UploadForm>,) -> impl Responder {
     info!("upload()");
 
-    let res  = state.service.upload(MultipartForm(form)).await;
+    let mapped_pdfs = map_pdfs(MultipartForm(form));
+
+    if mapped_pdfs.is_err() {
+        return HttpResponse::InternalServerError().json(ErrorDto { message: mapped_pdfs.err().unwrap() });
+    }
+
+    let res  = state.service.upload(mapped_pdfs.unwrap()).await;
 
     match res {
         Ok(_) => HttpResponse::Created().json(()),
