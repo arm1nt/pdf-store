@@ -1,21 +1,9 @@
 use log::info;
-use std::{collections::HashSet, f64::consts::E};
-
-use base64::engine::general_purpose;
-use image::ImageOutputFormat;
-use tokio::fs;
-use tokio::io::AsyncWriteExt as _;
-use actix_web::{get, put, delete, web::{ Data, self }, HttpResponse, Responder};
-use actix_multipart::Multipart;
-use futures_util::TryStreamExt as _;
-use mime::{ Mime, APPLICATION_PDF };
+use actix_web::{web::{ Data, self }, HttpResponse, Responder};
+use actix_multipart::form::MultipartForm;
 use uuid::Uuid;
-use pdfium_render::prelude::*;
-use base64::Engine as _;
-use sqlx::{self, QueryBuilder, Postgres};
-use chrono::prelude::*;
 
-use crate::{AppState, errors::PdfMetadataByIdError, service::{self, pdf::PdfService}, api::dto::pdf::{PdfSearchDto, PdfUpdateDto}};
+use crate::{AppState, errors::PdfMetadataByIdError, service::pdf::PdfService, api::dto::pdf::{PdfSearchDto, PdfUpdateDto}, util::UploadForm};
 use crate::api::dto::paging::PagingDto;
 use crate::api::dto::error::ErrorDto;
 
@@ -89,6 +77,7 @@ pub async fn get_by_id(state: Data<AppState>, id: web::Path<String>) -> impl Res
 }
 
 
+
 pub async fn search(state: Data<AppState>, search: web::Query<PdfSearchDto>) -> impl Responder {
     info!("search()");
 
@@ -110,6 +99,7 @@ pub async fn search(state: Data<AppState>, search: web::Query<PdfSearchDto>) -> 
         
     }
 }
+
 
 
 pub async fn update(state: Data<AppState>, update: web::Json<PdfUpdateDto>, id: web::Path<String>) -> impl Responder {
@@ -136,6 +126,7 @@ pub async fn update(state: Data<AppState>, update: web::Json<PdfUpdateDto>, id: 
 }
 
 
+
 pub async fn delete(state: Data<AppState>, id: web::Path<String>) -> impl Responder {
     info!("delete()");
 
@@ -153,5 +144,18 @@ pub async fn delete(state: Data<AppState>, id: web::Path<String>) -> impl Respon
     match delete_res {
         Ok(_) => HttpResponse::Ok().json(()),
         Err(msg) => HttpResponse::InternalServerError().json(ErrorDto { message: msg })
+    }
+}
+
+
+
+pub async fn upload(state: Data<AppState>, MultipartForm(form): MultipartForm<UploadForm>,) -> impl Responder {
+    info!("upload()");
+
+    let res  = state.service.upload(MultipartForm(form)).await;
+
+    match res {
+        Ok(_) => HttpResponse::Created().json(()),
+        Err(msg) => HttpResponse::InternalServerError().json(ErrorDto { message: msg })   
     }
 }

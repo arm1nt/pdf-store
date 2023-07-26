@@ -1,10 +1,11 @@
 use std::{sync::Arc, collections::HashSet};
 
+use chrono::Local;
 use log::trace;
-use sqlx::{Pool, Postgres, Transaction, QueryBuilder, PgConnection};
+use sqlx::{Pool, Postgres, QueryBuilder, PgConnection};
 use uuid::Uuid;
 
-use crate::{model::pdf::{PdfPaging, PdfOverview, Pdf, Tag, TotalPageNumber}, api::dto::{paging::PagingDto, pdf::{PdfSearchDto, PdfOverviewDto, PdfUpdateDto, PdfMetadataDto}}};
+use crate::{model::pdf::{PdfOverview, Pdf, Tag, TotalPageNumber}, api::dto::{paging::PagingDto, pdf::{PdfSearchDto, PdfOverviewDto, PdfUpdateDto, PdfMetadataDto}}};
 use crate::errors::PdfMetadataByIdError;
 
 use async_trait::async_trait;
@@ -28,6 +29,8 @@ pub trait PdfRepository: Send + Sync {
     async fn update(&self, update: PdfUpdateDto, pdf_id: &Uuid) -> Result<PdfMetadataDto, String>;
 
     async fn delete(&self, id: &Uuid) -> Result<String, String>;
+
+    async fn upload(&self, title: String, filename: String, author: Option<String>, pages: Option<i32>, img: String) -> Result<Pdf, sqlx::Error>;
 
 }
 
@@ -127,7 +130,7 @@ impl PdfRepository for PdfRepositoryImpl {
         return Err(PdfMetadataByIdError::DatabaseError("Error retrieving the tags associated with pdf".to_string()));
     }
 
-    //TODO: refactor get tags and get tags connection to one method
+
     async fn get_associated_tags_of_pdf_with_connection(&self, pdf_id: &Uuid, conn: &mut PgConnection) -> Result<Vec<String>, PdfMetadataByIdError> {
         trace!("repository: get_associated_tags_of_pdf()");
 
@@ -397,6 +400,31 @@ impl PdfRepository for PdfRepositoryImpl {
             Ok(_) => Ok(file_name_to_delete_res.unwrap().file_name),
             Err(_)=> Err("Failed to delete pdf".to_string())
         }
+    }
+
+    async fn upload(&self, title: String, filename: String, author: Option<String>, pages: Option<i32>, img: String) -> Result<Pdf, sqlx::Error> {
+        trace!("repository: upload()");
+
+        let current_time = Local::now();
+
+        let upload_query_res = sqlx::query_as!(
+            Pdf,
+            "INSERT INTO pdfs (title, file_name,author, pages, time_added, picture) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+            title,
+            filename,
+            author,
+            pages,
+            current_time,
+            img
+        )
+        .fetch_one(self.pool.as_ref())
+        .await;
+
+        match upload_query_res {
+            Ok(uploaded_pdf) => Ok(uploaded_pdf),
+            Err(err) => Err(err)
+        }
+
     }
     
 

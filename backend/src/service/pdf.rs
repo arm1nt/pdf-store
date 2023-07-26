@@ -1,11 +1,13 @@
+use actix_multipart::form::MultipartForm;
 use actix_web::web;
 use base64::Engine as _;
 use base64::engine::general_purpose;
 use log::trace;
+use mime::APPLICATION_PDF;
 use std::sync::Arc;
 use async_trait::async_trait;
 use uuid::Uuid;
-use crate::{api::dto::{paging::PagingDto, pdf::{PdfOverviewDto, PdfMetadataDto, PdfDto, PdfSearchDto, PdfUpdateDto}}, repository::pdfs::PdfRepository, errors::PdfMetadataByIdError};
+use crate::{api::dto::{paging::PagingDto, pdf::{PdfOverviewDto, PdfMetadataDto, PdfDto, PdfSearchDto, PdfUpdateDto}}, repository::pdfs::PdfRepository, errors::PdfMetadataByIdError, util::{get_preview_of_pdf, UploadForm}};
 
 
 #[derive(Clone)]
@@ -14,10 +16,10 @@ pub struct PdfServiceImpl {
 }
 
 #[async_trait]
-pub trait PdfService {
+pub trait PdfService: {
     async fn get_all(&self, paging: PagingDto) -> Result<PdfOverviewDto, String>;
 
-    async fn get_pdf_metadata(&self, pdfId: &Uuid) -> Result<PdfMetadataDto, PdfMetadataByIdError>;
+    async fn get_pdf_metadata(&self, pdf_id: &Uuid) -> Result<PdfMetadataDto, PdfMetadataByIdError>;
 
     async fn get_by_id(&self, pdf_id: &Uuid) -> Result<PdfDto, String>;
 
@@ -26,11 +28,68 @@ pub trait PdfService {
     async fn update(&self, update: PdfUpdateDto, pdf_id: &Uuid) -> Result<PdfMetadataDto, String>;
 
     async fn delete(&self, pdf_id: &Uuid) -> Result<(), String>;
+
+    async fn upload(&self, MultipartForm(form): MultipartForm<UploadForm>) -> Result<(), String>;
 }
 
 
 #[async_trait]
 impl PdfService for PdfServiceImpl {
+
+    async fn upload(&self,  MultipartForm(form): MultipartForm<UploadForm>) -> Result<(), String> {
+        trace!("service: upload()");
+
+        for file in form.files {
+            if file.content_type.is_none() {
+                continue;
+            }
+        
+            if !(file.content_type.unwrap() == APPLICATION_PDF) {
+                continue;
+            }
+        
+            let file_name = file.file_name.unwrap();
+            let file_name_temp = file_name.clone();
+        
+        
+            let path = format!("./upload/{}", file_name);
+            let path_cloned = path.clone();
+            let persist_file_fs = file.file.persist(path);
+
+            match persist_file_fs {
+                Err(_) => continue,
+                _ => ()
+            }
+
+            let pdf_info_res = get_preview_of_pdf(&path_cloned, String::as_str(&file_name_temp));
+
+            if pdf_info_res.is_err() {
+                std::fs::remove_file(path_cloned).unwrap();
+                continue;
+            }
+
+            let (img, title, author, pages) = pdf_info_res.unwrap();
+
+            let res = self.repository.upload(title, file_name_temp, author, pages, img).await;
+            match res {
+                Ok(_) => (),
+                Err(err) => {
+                    if err.as_database_error().is_some() {
+                        let code = err.as_database_error().unwrap().code().unwrap();
+                        if code != "23505" {
+                            std::fs::remove_file(path_cloned).unwrap()
+                        }            
+                    } else {
+                        std::fs::remove_file(path_cloned).unwrap();
+                    }
+                }
+            }
+        }
+
+        Ok(())
+        
+    }
+
 
     async fn get_all(&self, paging: PagingDto) -> Result<PdfOverviewDto, String> {
         trace!("service: get_all()");
@@ -72,7 +131,6 @@ impl PdfService for PdfServiceImpl {
             _ => ()
         }
 
-        //TODO: maybe create mapper module
         let pdf_metadata = pdf_metadata_res.unwrap();
 
         let metadata_dto = PdfMetadataDto {
@@ -151,7 +209,7 @@ impl PdfService for PdfServiceImpl {
         let _ = std::fs::remove_file(path); //Not too important whether this succeeds or not
 
         Ok(())
-
     }
+
     
 }
