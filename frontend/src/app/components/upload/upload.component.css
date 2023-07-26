@@ -59,6 +59,11 @@
   padding-right: 0.5em;
 }
 
+.file-upload-overview-container h2 {
+  text-align: center;
+  font-family: 'DM Sans', sans-serif;
+}
+
 .file-upload-overview {
   width: 100%;
   max-width: 1000px;

@@ -78,7 +78,7 @@ async fn main() -> Result<()> {
                     .route("/upload", web::post().to(upload))
             )
     })
-    .bind(("127.0.0.1", 8081))?
+    .bind(("127.0.0.1", 8080))?
     .workers(3)
     .run()
     .await

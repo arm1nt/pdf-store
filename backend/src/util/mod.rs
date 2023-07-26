@@ -121,7 +121,4 @@ fn get_preview_of_pdf_pdfium(pdfium: &Pdfium, location: &String, filename: &str)
     let base64image = general_purpose::STANDARD.encode(bytes);
 
     Ok((base64image, title, author, pages))
-    
-    //Ok((String::from("no"), title, author, pages))
-
 }
