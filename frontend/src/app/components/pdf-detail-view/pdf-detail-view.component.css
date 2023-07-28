@@ -1,7 +1,7 @@
 .detail-navigation {
   display: flex;
   flex-direction: row;
-  justify-content: start;
+  justify-content: flex-start;
   width: 95%;
   margin: 1em auto 3.5em;
   max-width: 2000px;
@@ -103,7 +103,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: start;
+  justify-content: flex-start;
 }
 
 .detail-title {
@@ -211,7 +211,7 @@
 .delete-cancel-edit-container {
   display: flex;
   flex-direction: row;
-  justify-content: end;
+  justify-content: flex-end;
   gap: 20px;
 }
 
@@ -288,6 +288,10 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+  }
+
+  .detail-navigation {
+    display: none;
   }
 
 }
