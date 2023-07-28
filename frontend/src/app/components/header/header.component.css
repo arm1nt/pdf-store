@@ -1,54 +1,3 @@
-/*.header-container {
-  width: 100%;
-  height: 4.5em;
-  background-color: #b00909;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-.button-container {
-  height: 100%;
-  width: fit-content;
-  display: flex;
-  column-gap: 1em;
-  align-items: center;
-  font-family: 'DM Sans', sans-serif;
-  padding: 0 10px;
-  color: white;
-  cursor: pointer;
-}
-
-.div2 {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  max-width: 1000px;
-}
-
-.header-nav-element first {
-  margin-left: 1em;
-
-}
-
-#pdf-search {
-  display: flex;
-  align-self: center;
-  width: 100%;
-  height: 3em;
-  border: none;
-  border-radius: 0.6em;
-  background-color: #eeeeee;
-  text-indent: 1em;
-  color: #b00909;
-  max-width: 1000px;
-  margin-right: 2em;
-}*/
-
-
-
 .header-container {
   display: flex;
   flex-direction: row;
@@ -63,16 +12,14 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  width: 25%;
-  min-width: 505px;
+  width: fit-content;
 }
 
 .header-right-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
-  margin-right: 2em;
-  /*border: 1px blue solid;*/
+  margin-right: 3em;
 }
 
 #pdf-search {
@@ -89,7 +36,7 @@
 }
 
 .app-name {
-  font-size: 3em;
+  font-size: 2.5em;
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
   display: flex;
@@ -97,24 +44,47 @@
   justify-content: center;
   height: 100%;
   margin-right: 0.5em;
+  margin-left: 1.2em;
   cursor: default;
+  color: #ffdfdf;
 }
 
 .header-nav-element {
   align-self: center;
   margin-left: 2em;
-  height: 80%;
-  padding-left: 0.25em;
-  padding-right: 0.25em;
+  padding: 8px 25px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   font-family: 'DM Sans', sans-serif;
-  font-size: 1.4em;
+  font-size: 1.2em;
+  font-weight: 500;
+  background-color: rgba(255, 255, 255, 0.31);
+  color: #ffd7d7;
+  border-radius: 12px;
 }
 
 .header-nav-element:hover {
-  background-color: white;
-  color: #b00909;
-  border-radius: 6px;
+  filter: brightness(0.9);
+}
+
+@media (max-width: 640px) {
+  .header-left-container {
+    display: none;
+  }
+
+  .header-right-container {
+    margin: auto;
+    width: 90%;
+    justify-content: space-evenly;
+  }
+
+  .header-nav-element {
+    margin-left: 0;
+  }
+
+  .header-container {
+    height: 2.8em;
+  }
+
 }
