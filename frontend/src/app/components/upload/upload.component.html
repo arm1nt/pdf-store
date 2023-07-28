@@ -22,7 +22,7 @@
     <div class="file-upload-summary" *ngFor="let file of files; let indexOfElement=index">
     <span style="display: flex; flex-direction: row; justify-content: space-between; width: 100%">
       <span class="pdf-upload-name">{{file.name}}</span>
-      <span class="pdf-upload-trash-section"><span class="material-symbols-outlined pdf-upload-trash-icon" (click)="removeFromFileArray(indexOfElement)">delete</span></span>
+      <span class="pdf-upload-trash-section"><span class="material-symbols-outlined pdf-upload-trash-icon animation-trash" (click)="removeFromFileArray(indexOfElement)">delete</span></span>
     </span>
     </div>
   </div>

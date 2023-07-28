@@ -173,6 +173,25 @@
   align-items: center;
 }
 
+.animation-trash:hover {
+  animation: shakeMake 0.2s linear;
+}
+
+
+@keyframes shakeMake {
+  0% {
+    transform: rotate(15deg);
+  }
+
+  50% {
+    transform: rotate(-15deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
 
 @media(max-width: 800px) {
   .file-upload-container {
