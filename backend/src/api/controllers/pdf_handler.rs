@@ -3,7 +3,7 @@ use actix_web::{web::{ Data, self }, HttpResponse, Responder};
 use actix_multipart::form::MultipartForm;
 use uuid::Uuid;
 
-use crate::{AppState, errors::PdfMetadataByIdError, service::pdf::PdfService, api::dto::pdf::{PdfSearchDto, PdfUpdateDto}, util::{UploadForm, map_pdfs}};
+use crate::{AppState, errors::PdfMetadataByIdError, api::dto::pdf::{PdfSearchDto, PdfUpdateDto}, util::{UploadForm, map_pdfs}, domain::service::pdf::PdfService};
 use crate::api::dto::paging::PagingDto;
 use crate::api::dto::error::ErrorDto;
 

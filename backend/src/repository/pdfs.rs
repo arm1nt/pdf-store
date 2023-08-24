@@ -6,33 +6,11 @@ use sqlx::{Pool, Postgres, QueryBuilder, PgConnection};
 use uuid::Uuid;
 
 use crate::{model::pdf::{PdfOverview, Pdf, Tag, TotalPageNumber}, api::dto::{paging::PagingDto, pdf::{PdfSearchDto, PdfOverviewDto, PdfUpdateDto, PdfMetadataDto}}};
+use crate::domain::repository::pdf::PdfRepository;
 use crate::errors::PdfMetadataByIdError;
 
 use async_trait::async_trait;
 
-#[async_trait]
-pub trait PdfRepository: Send + Sync {
-    async fn total_number_of_pdfs(&self) -> Result<Option<i64>, String>;
-    
-    async fn get_pdfs_paged(&self, paging: &PagingDto) -> Result<Vec<PdfOverview>, String>;
-
-    async fn get_pdf_metadata(&self, pdf_id: &Uuid) -> Result<Pdf, PdfMetadataByIdError>;
-
-    async fn get_associated_tags_of_pdf(&self, pdf_id: &Uuid) -> Result<Vec<String>, PdfMetadataByIdError>;
-
-    async fn get_associated_tags_of_pdf_with_connection(&self, pdf_id: &Uuid, conn: &mut PgConnection) -> Result<Vec<String>, PdfMetadataByIdError>;
-
-    async fn get_by_id(&self, pdf_id: &Uuid) -> Result<String, String>;
-
-    async fn search(&self, search: &PdfSearchDto) -> Result<PdfOverviewDto, String>;
-
-    async fn update(&self, update: PdfUpdateDto, pdf_id: &Uuid) -> Result<PdfMetadataDto, String>;
-
-    async fn delete(&self, id: &Uuid) -> Result<String, String>;
-
-    async fn upload(&self, title: String, filename: String, author: Option<String>, pages: Option<i32>, img: String) -> Result<Pdf, sqlx::Error>;
-
-}
 
 pub struct PdfRepositoryImpl {
     pub pool: Arc<Pool<Postgres>>
