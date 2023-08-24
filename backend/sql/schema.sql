@@ -12,12 +12,6 @@ CREATE TABLE pdfs (
     picture TEXT
 );
 
-CREATE TABLE users (
-    id uuid DEFAULT uuid_generate_v4 () PRIMARY KEY,
-    username VARCHAR(16) NOT NULL UNIQUE,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL
-);
 
 CREATE TABLE tags (
     name TEXT PRIMARY KEY
