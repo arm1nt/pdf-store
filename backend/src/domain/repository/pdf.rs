@@ -2,7 +2,7 @@ use async_trait::async_trait;
 use uuid::Uuid;
 use sqlx::PgConnection;
 
-use crate::{model::pdf::{PdfOverview, Pdf}, api::dto::{paging::PagingDto, pdf::{PdfSearchDto, PdfOverviewDto, PdfUpdateDto, PdfMetadataDto}}};
+use crate::{domain::models::pdf::{PdfOverview, Pdf}, api::dto::{paging::PagingDto, pdf::{PdfSearchDto, PdfOverviewDto, PdfUpdateDto, PdfMetadataDto}}};
 use crate::errors::PdfMetadataByIdError;
 
 #[async_trait]

@@ -16,7 +16,6 @@ use crate::repository::pdfs::PdfRepositoryImpl;
 pub mod api;
 pub mod util;
 pub mod repository;
-pub mod model;
 pub mod domain;
 pub mod service;
 pub mod errors;

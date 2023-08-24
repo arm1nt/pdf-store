@@ -5,7 +5,7 @@ use log::trace;
 use sqlx::{Pool, Postgres, QueryBuilder, PgConnection};
 use uuid::Uuid;
 
-use crate::{model::pdf::{PdfOverview, Pdf, Tag, TotalPageNumber}, api::dto::{paging::PagingDto, pdf::{PdfSearchDto, PdfOverviewDto, PdfUpdateDto, PdfMetadataDto}}};
+use crate::{domain::models::pdf::{PdfOverview, Pdf, Tag, TotalPageNumber}, api::dto::{paging::PagingDto, pdf::{PdfSearchDto, PdfOverviewDto, PdfUpdateDto, PdfMetadataDto}}};
 use crate::domain::repository::pdf::PdfRepository;
 use crate::errors::PdfMetadataByIdError;
 

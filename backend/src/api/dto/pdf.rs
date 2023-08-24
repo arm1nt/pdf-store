@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use chrono::{DateTime, Utc};
 
-use crate::model::pdf::PdfOverview;
+use crate::domain::models::pdf::PdfOverview;
 
 
 #[derive(Serialize, Deserialize, Debug)]
